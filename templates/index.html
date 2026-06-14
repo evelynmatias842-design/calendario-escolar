@@ -38,11 +38,15 @@
                         end: info.endStr
                     };
                     
-                    fetch('/api/events', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(nuevoEvento)
-                    })
+                   // ... dentro de tu script
+fetch('/api/events', {  // <-- Asegúrate de que aquí diga exactamente '/api/events'
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(nuevoEvento)
+})
+// ... el resto de tu código
                     .then(response => response.json())
                     .then(data => {
                         alert('✅ ' + data.message);
