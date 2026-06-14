@@ -40,6 +40,7 @@ def obtener_eventos():
 
 @app.route('/api/events', methods=['POST'])
 def guardar_evento():
+    # ... (el código que ya tienes)
     try:
         datos = request.get_json()
         
