@@ -5,7 +5,7 @@ import urllib.parse
 app = Flask(__name__)
 
 # 🔴 PEGA TUS DATOS DE TELEGRAM AQUÍ EN MEDIO DE LAS COMILLAS
-TELEGRAM_TOKEN = "8896103095:AAHQP6eONVkdkxdMgE4X1sccMomRrnbGh2si"
+TELEGRAM_TOKEN = "8896103095:AAHQP6eONVkdkxdMgE4X1sccMomRrnbGh2s"
 CHAT_ID = "6814697148"
 
 def enviar_aviso_telegram():
