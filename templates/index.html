@@ -162,48 +162,16 @@
             listEl.innerHTML = html;
         }
     </script>
-    document.addEventListener('DOMContentLoaded', function() {
-    var calendarEl = document.getElementById('calendar'); // Asegúrate de que coincida con el ID de tu div
-    
-    var calendar = new FullCalendar.Calendar(calendarEl, {
-      initialView: 'dayGridMonth',
-      locale: 'es', // Idioma en español
-      selectable: true, // Permite hacer clic en los días
-      editable: true,
-      
-      // 🔄 Esto carga automáticamente las tareas guardadas desde el servidor
-      events: '/api/eventos', 
-      
-      // ✍️ Esto se ejecuta cuando un alumno/maestro hace clic en un día para añadir una tarea
-      select: function(info) {
-        var titulo = prompt('Escribe el título del evento o examen:');
-        if (titulo) {
-          var nuevoEvento = {
-            title: titulo,
-            start: info.startStr,
-            end: info.endStr
-          };
-          
-          // Enviar los datos a Render para que los registre de forma permanente
-          fetch('/api/eventos', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(nuevoEvento)
-          })
-          .then(response => response.json())
-          .then(data => {
-            // Recargar el calendario en pantalla para mostrar la nueva tarea
-            calendar.refetchEvents(); 
-          });
-        }
-        calendar.unselect();
-      }
-    });
-    
-    calendar.render();
-  });
+    document.addEventListener('DOMContentLoaded', function() { 
+    var calendarEl = document.getElementById('calendar'); 
+    var calendar = new FullCalendar.Calendar(calendarEl, { 
+        initialView: 'dayGridMonth', 
+        locale: 'es', 
+        selectable: true,
+        // ... (aquí va todo el resto de tu código actual) ...
+    }); 
+    calendar.render(); 
+});
 </script>
 </body>
 </html>
