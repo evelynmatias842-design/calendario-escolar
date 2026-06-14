@@ -15,8 +15,7 @@ app = Flask(__name__, template_folder='templates')
 TELEGRAM_TOKEN = "8896103095:AAHQP6eONVkdkxdMgE4X1sccMomRrnbGh2s"
 CHAT_ID = "6814697148"
 ARCHIVO_DATOS = "eventos.json"
-
-        def enviar_aviso_telegram(mensaje):
+def enviar_aviso_telegram(mensaje):
     try:
         mensaje_seguro = urllib.parse.quote(mensaje)
         url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={mensaje_seguro}"
