@@ -8,7 +8,7 @@ app = Flask(__name__, template_folder='templates')
 
 # CONFIGURACIÓN DE TELEGRAM
 TELEGRAM_TOKEN = "8896103095:AAHQP6eONVkdkxdMgE4X1sccMomRrnbGh2s"
-CHAT_ID = "61814697148"
+CHAT_ID = "6814697148""
 ARCHIVO_DATOS = "eventos.json"
 
 def enviar_aviso_telegram(mensaje):
