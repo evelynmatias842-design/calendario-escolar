@@ -90,7 +90,13 @@
                 const category = document.getElementById('category').value;
                 const urgent = document.getElementById('urgent').checked;
 
-                fetch('/api/events', {
+                fetch('/api/events', {fetch('/api/events', {  // <-- Si en app.py dice 'eventos', aquí también debe decir 'eventos'
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(nuevoEvento)
+})
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ title, start, category, urgent })
