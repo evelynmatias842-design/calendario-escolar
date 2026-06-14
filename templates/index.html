@@ -156,7 +156,7 @@
         
         calendar.render();
 
-        // Manejar el envío del formulario lateral
+        // Guardar el evento al pulsar el botón morado
         document.getElementById('eventoForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -183,14 +183,14 @@
             .then(data => {
                 if(data.status === "success") {
                     alert('✅ ¡Evento guardado correctamente!');
-                    calendar.refetchEvents(); // Recarga los eventos en el mapa visual
+                    calendar.refetchEvents(); // Actualiza el calendario en el momento
                     document.getElementById('eventoForm').reset();
                 } else {
-                    alert('❌ Error: ' + data.message);
+                    alert('❌ Error al guardar en servidor: ' + data.message);
                 }
             })
             .catch(error => {
-                alert('❌ Error al conectar con el servidor.');
+                alert('❌ Error de conexión con Render.');
             });
         });
     });
