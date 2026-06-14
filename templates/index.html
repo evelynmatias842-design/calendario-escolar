@@ -96,6 +96,12 @@
             color: #4f46e5;
             margin-top: 0;
         }
+        #timerDisplay {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ef4444;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -131,9 +137,8 @@
 
             <div class="card countdown-card">
                 <h3>🚨 Cuenta Regresiva</h3>
-                <div id="cuentaRegresivaText" style="color: #666; font-style: italic; font-size: 14px;">
-                    No hay tareas urgentes marcadas.
-                </div>
+                <div id="cuentaRegresivaText">Buscando tareas urgentes...</div>
+                <div id="timerDisplay"></div>
             </div>
         </div>
 
@@ -146,17 +151,80 @@
     <script>
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
-        
+        var intervaloTimer;
+
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: 'es',
             editable: true,
-            events: '/api/events'
+            events: '/api/events',
+            eventDataTransform: function(eventData) {
+                // Forzar que FullCalendar mantenga la propiedad 'urgente' si viene del backend
+                if (eventData.extendedProps && eventData.extendedProps.urgente) {
+                    eventData.urgente = true;
+                }
+                return eventData;
+            },
+            eventsSet: function(events) {
+                // Cada vez que el calendario cargue o actualice eventos, recalculamos la cuenta regresiva
+                actualizarCuentaRegresiva(events);
+            }
         });
         
         calendar.render();
 
-        // Guardar el evento al pulsar el botón morado
+        // Función lógica para la cuenta regresiva
+        function actualizarCuentaRegresiva(eventos) {
+            clearInterval(intervaloTimer);
+            var ahora = new Date();
+            var proximoUrgente = null;
+
+            // Buscar el evento urgente más cercano en el futuro
+            eventos.forEach(function(ev) {
+                if (ev.extendedProps && ev.extendedProps.urgente) {
+                    var fechaEv = new Date(ev.startStr + 'T00:00:00');
+                    if (fechaEv > ahora) {
+                        if (!proximoUrgente || fechaEv < new Date(proximoUrgente.startStr + 'T00:00:00')) {
+                            proximoUrgente = ev;
+                        }
+                    }
+                }
+            });
+
+            var txtContenedor = document.getElementById('cuentaRegresivaText');
+            var timerContenedor = document.getElementById('timerDisplay');
+
+            if (!proximoUrgente) {
+                txtContenedor.innerText = "No hay tareas urgentes marcadas.";
+                timerContenedor.innerText = "";
+                return;
+            }
+
+            txtContenedor.innerHTML = "Próxima tarea urgente:<br><strong>" + proximoUrgente.title + "</strong>";
+            
+            var fechaObjetivo = new Date(proximoUrgente.startStr + 'T00:00:00').getTime();
+
+            // Actualizar el contador cada segundo
+            intervaloTimer = setInterval(function() {
+                var momentoActual = new Date().getTime();
+                var diferencia = fechaObjetivo - momentoActual;
+
+                if (diferencia <= 0) {
+                    timerContenedor.innerText = "¡El evento ha comenzado!";
+                    clearInterval(intervaloTimer);
+                    return;
+                }
+
+                var dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+                var horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                var minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+                var segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+                timerContenedor.innerText = "Faltan: " + dias + "d " + horas + "h " + minutos + "m " + segundos + "s";
+            }, 1000);
+        }
+
+        // Guardar nuevo evento
         document.getElementById('eventoForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -183,14 +251,14 @@
             .then(data => {
                 if(data.status === "success") {
                     alert('✅ ¡Evento guardado correctamente!');
-                    calendar.refetchEvents(); // Actualiza el calendario en el momento
+                    calendar.refetchEvents(); 
                     document.getElementById('eventoForm').reset();
                 } else {
-                    alert('❌ Error al guardar en servidor: ' + data.message);
+                    alert('❌ Error: ' + data.message);
                 }
             })
             .catch(error => {
-                alert('❌ Error de conexión con Render.');
+                alert('❌ Error al conectar con Render.');
             });
         });
     });
