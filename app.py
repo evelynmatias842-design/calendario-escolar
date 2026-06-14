@@ -15,6 +15,27 @@ ARCHIVO_DATOS = "eventos.json"
 def enviar_aviso_telegram(mensaje):
     """Función para enviar notificaciones a tu Telegram"""
     try:
+        
+        # CONVIERTE LOS ESPACIOS Y ACENTOS EN TEXTO SEGURO PARA URL
+        mensaje_seguro = urllib.parse.quote(mensaje)
+        
+        # ARMA LA URL USANDO EL MENSAJE SEGURO
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={mensaje_seguro}"
+        
+        # ENVÍA EL MENSAJE
+        urllib.request.urlopen(url)
+    except Exception as e:
+        print(f"No se pudo enviar el mensaje a Telegram: {e}")
+        # CONVIERTE LOS ESPACIOS Y ACENTOS EN TEXTO SEGURO PARA URL
+        mensaje_seguro = urllib.parse.quote(mensaje)
+        
+        # ARMA LA URL USANDO EL MENSAJE SEGURO
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={mensaje_seguro}"
+        
+        # ENVÍA EL MENSAJE
+        urllib.request.urlopen(url)
+    except Exception as e:
+        print(f"No se pudo enviar el mensaje a Telegram: {e}")
         if "AQUÍ_PEGA" in TELEGRAM_TOKEN or not TELEGRAM_TOKEN:
             return
         url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
