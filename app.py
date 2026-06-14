@@ -5,7 +5,7 @@ import json
 import os
 
 # Configuración de Flask
-app = Flask(__name__, template_folder='Plantillas')
+app = Flask(__name__, template_folder='templates')
 
 # 🔴 CONFIGURACIÓN DE TELEGRAM (Pon tu Token dentro de las comillas)
 TELEGRAM_TOKEN = "8896103095:AAHQP6eONVkdkxdMgE4X1sccMomRrnbGh2s"
