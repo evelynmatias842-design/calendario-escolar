@@ -1,68 +1,34 @@
-from flask import Flask, render_template, request, jsonify
-import json
-import os
-import uuid
+from flask import Flask, render_template
+import urllib.request
+import urllib.parse
 
 app = Flask(__name__)
-DATA_FILE = 'events.json'
 
-# Función para leer los eventos guardados
-def load_events():
-    if not os.path.exists(DATA_FILE):
-        return []
-    with open(DATA_FILE, 'r', encoding='utf-8') as f:
-        try:
-            return json.load(f)
-        except json.JSONDecodeError:
-            return []
+# 🔴 PEGA TUS DATOS DE TELEGRAM AQUÍ EN MEDIO DE LAS COMILLAS
+TELEGRAM_TOKEN = "AQUÍ_PEGA_TU_TOKEN_DE_TELEGRAM"
+CHAT_ID = "AQUÍ_PEGA_TU_CHAT_ID"
 
-# Función para guardar los eventos
-def save_events(events):
-    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-        json.dump(events, f, ensure_ascii=False, indent=4)
+def enviar_aviso_telegram():
+    """Función para enviar un mensaje automático a Telegram"""
+    try:
+        mensaje = "🚀 ¡Alguien acaba de entrar a visitar tu Calendario Escolar!"
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+        
+        # Preparamos los datos para enviar
+        valores = {"chat_id": CHAT_ID, "text": mensaje}
+        datos = urllib.parse.urlencode(valores).encode("utf-8")
+        
+        # Hacemos la petición segura a Telegram
+        req = urllib.request.Request(url, data=datos)
+        urllib.request.urlopen(req)
+    except Exception as e:
+        print(f"No se pudo enviar el mensaje a Telegram: {e}")
 
 @app.route('/')
 def index():
+    # Cada vez que alguien entra a la ruta principal, se activa el aviso
+    enviar_aviso_telegram()
     return render_template('index.html')
-
-# Ruta para obtener los eventos en el calendario
-@app.route('/api/events', methods=['GET'])
-def get_events():
-    return jsonify(load_events())
-
-# Ruta para añadir un nuevo evento
-@app.route('/api/events', methods=['POST'])
-def add_event():
-    data = request.json
-    events = load_events()
-    
-    # Código de colores personalizado
-    colors = {
-        'tarea': '#3b82f6',     # Azul
-        'examen': '#ef4444',    # Rojo
-        'personal': '#10b981'   # Verde
-    }
-    
-    new_event = {
-        'id': str(uuid.uuid4()),
-        'title': data.get('title'),
-        'start': data.get('start'),  # Formato YYYY-MM-DD
-        'category': data.get('category'),
-        'color': colors.get(data.get('category'), '#6b7280'),
-        'urgent': data.get('urgent', False)
-    }
-    
-    events.append(new_event)
-    save_events(events)
-    return jsonify(new_event), 201
-
-# Ruta para eliminar un evento si haces clic en él
-@app.route('/api/events/<event_id>', methods=['DELETE'])
-def delete_event(event_id):
-    events = load_events()
-    events = [e for e in events if e['id'] != event_id]
-    save_events(events)
-    return jsonify({'status': 'success'})
 
 if __name__ == '__main__':
     app.run(debug=True)
