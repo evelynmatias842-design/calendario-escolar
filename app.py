@@ -20,9 +20,33 @@ def enviar_aviso_telegram(mensaje):
         mensaje_seguro = urllib.parse.quote(mensaje)
         url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={mensaje_seguro}"
         urllib.request.urlopen(url)
-       @app.route('/api/events', methods=['POST'])
-        # <-- Mira cómo está escrito aquí
+      @app.route('/api/events', methods=['POST'])
 def guardar_evento():
+    try:
+        datos = request.get_json()
+        
+        # Cargar eventos existentes si el archivo ya existe
+        if os.path.exists(ARCHIVO_DATOS):
+            with open(ARCHIVO_DATOS, 'r', encoding='utf-8') as f:
+                eventos = json.load(f)
+        else:
+            eventos = []
+            
+        # Agregar el nuevo evento a la lista
+        eventos.append(datos)
+        
+        # Guardar de nuevo en el archivo JSON
+        with open(ARCHIVO_DATOS, 'w', encoding='utf-8') as f:
+            json.dump(eventos, f, ensure_ascii=False, indent=4)
+            
+        # Enviar aviso a Telegram
+        titulo = datos.get('title', 'Sin título')
+        enviar_aviso_telegram(f"📢 ¡Nuevo evento guardado!: {titulo}")
+        
+        return jsonify({"status": "success", "message": "Evento guardado correctamente"}), 200
+        
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
     # ... tu código para guardar el json ...
     except Exception as e:
         print(f"No se pudo enviar el mensaje a Telegram: {e}")
