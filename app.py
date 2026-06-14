@@ -20,7 +20,8 @@ def enviar_aviso_telegram(mensaje):
         mensaje_seguro = urllib.parse.quote(mensaje)
         url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={mensaje_seguro}"
         urllib.request.urlopen(url)
-        @app.route('/api/eventos', methods=['POST']) # <-- Mira cómo está escrito aquí
+       @app.route('/api/events', methods=['POST'])
+        # <-- Mira cómo está escrito aquí
 def guardar_evento():
     # ... tu código para guardar el json ...
     except Exception as e:
