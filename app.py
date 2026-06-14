@@ -21,6 +21,8 @@ def enviar_aviso_telegram(mensaje):
 
 @app.route('/')
 def home():
+    # 🚀 Esta línea es la que le ordena al bot avisarte de inmediato
+    enviar_aviso_telegram("🚀 ¡Alguien acaba de entrar a visitar tu Calendario Escolar!")
     return render_template('index.html')
 
 @app.route('/api/events', methods=['GET'])
