@@ -6,54 +6,35 @@
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/locales/es.js'></script>
-    
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
         #calendar { max-width: 900px; margin: 0 auto; }
     </style>
 </head>
 <body>
-
     <h2 style="text-align: center;">📅 Calendario Escolar</h2>
     <div id='calendar'></div>
-
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        var calendarEl = document.getElementById('calendar');
-        
-        var calendar = new FullCalendar.Calendar(calendarEl, {
+        var calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
             initialView: 'dayGridMonth',
             locale: 'es',
             selectable: true,
-            
-            // Carga los eventos desde nuestro servidor
             events: '/api/events',
-            
             select: function(info) {
-                var titulo = prompt('Escribe el título del evento:');
+                var titulo = prompt('Título del evento:');
                 if (titulo) {
-                    var nuevoEvento = {
-                        title: titulo,
-                        start: info.startStr,
-                        end: info.endStr
-                    };
-                    
-                   // ... dentro de tu script
-fetch('/api/events', {  // <-- Asegúrate de que aquí diga exactamente '/api/events'
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(nuevoEvento)
-})
-// ... el resto de tu código
-                    .then(response => response.json())
-                    .then(data => {
-                        alert('✅ ' + data.message);
+                    fetch('/api/events', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ title: titulo, start: info.startStr })
+                    })
+                    .then(r => r.json())
+                    .then(d => {
+                        alert('✅ ' + d.message);
                         calendar.refetchEvents();
                     });
                 }
-                calendar.unselect();
             }
         });
         calendar.render();
