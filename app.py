@@ -1,3 +1,7 @@
+import os
+import Flask  # (o las librerías que ya tengas arriba)
+import urllib.request
+import urllib.parse
 from flask import Flask, render_template, jsonify, request
 import urllib.request
 import urllib.parse
@@ -12,13 +16,13 @@ TELEGRAM_TOKEN = "8896103095:AAHQP6eONVkdkxdMgE4X1sccMomRrnbGh2s"
 CHAT_ID = "6814697148"
 ARCHIVO_DATOS = "eventos.json"
 
-def enviar_aviso_telegram(mensaje):
-    """Función para enviar notificaciones a tu Telegram"""
+        def enviar_aviso_telegram(mensaje):
     try:
-        
-        # CONVIERTE LOS ESPACIOS Y ACENTOS EN TEXTO SEGURO PARA URL
         mensaje_seguro = urllib.parse.quote(mensaje)
-        
+        url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={mensaje_seguro}"
+        urllib.request.urlopen(url)
+    except Exception as e:
+        print(f"No se pudo enviar el mensaje a Telegram: {e}")
         # ARMA LA URL USANDO EL MENSAJE SEGURO
         url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage?chat_id={CHAT_ID}&text={mensaje_seguro}"
         
